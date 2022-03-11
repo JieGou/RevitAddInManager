@@ -61,8 +61,9 @@
                 x:Name="tbxSearch"
                 Grid.Row="0"
                 Margin="5,0,5,0"
-                VerticalAlignment="Center" TextChanged="tbxSearch_TextChanged"
-                Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                VerticalAlignment="Center"
+                Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextChanged="tbxSearch_TextChanged">
                 <TextBox.Resources>
                     <VisualBrush
                         x:Key="tbxText"
@@ -107,18 +108,54 @@
                     Header="Load Command"
                     IsSelected="{Binding IsTabCmdSelected}">
                     <control:ExtendedTreeView
-                        x:Name="TreeViewCommand" MouseRightButtonDown="TreeViewCommand_MouseRightButtonDown"
+                        x:Name="TreeViewCommand"
                         FontSize="12"
                         ItemsSource="{Binding CommandItems, Mode=TwoWay}"
+                        MouseRightButtonDown="TreeViewCommand_MouseRightButtonDown"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                         SelectedItem_="{Binding SelectedCommandItem, Mode=TwoWay}">
                         <TreeView.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Command="{Binding LoadCommand}" Header="Load" />
-                                <MenuItem Command="{Binding RemoveCommand}" Header="Remove" />
-                                <MenuItem Command="{Binding OpenLcAssemblyCommand}" Header="Open Location Assembly" />
-                                <MenuItem Command="{Binding ExecuteAddinCommand}" Header="Run" />
-                                <MenuItem Command="{Binding ReloadCommand}" Header="Reload" />
+                                <MenuItem Command="{Binding LoadCommand}" Header="L(_L)oad">
+                                    <MenuItem.Icon>
+                                        <TextBlock
+                                            FontFamily="Segoe MDL2 Assets"
+                                            FontSize="16"
+                                            Text="&#xE896;" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Command="{Binding RemoveCommand}" Header="Rem(_M)ove">
+                                    <MenuItem.Icon>
+                                        <TextBlock
+                                            FontFamily="Segoe MDL2 Assets"
+                                            FontSize="16"
+                                            Text="&#xE107;" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Command="{Binding OpenLcAssemblyCommand}" Header="O(_O)pen Location Assembly">
+                                    <MenuItem.Icon>
+                                        <TextBlock
+                                            FontFamily="Segoe MDL2 Assets"
+                                            FontSize="16"
+                                            Text="&#xE838;" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Command="{Binding ExecuteAddinCommand}" Header="R(_R)un">
+                                    <MenuItem.Icon>
+                                        <TextBlock
+                                            FontFamily="Segoe MDL2 Assets"
+                                            FontSize="16"
+                                            Text="&#xF5B0;" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Command="{Binding ReloadCommand}" Header="Re(_E)load">
+                                    <MenuItem.Icon>
+                                        <TextBlock
+                                            FontFamily="Segoe MDL2 Assets"
+                                            FontSize="16"
+                                            Text="&#xE777;" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu>
                         </TreeView.ContextMenu>
                         <TreeView.ItemTemplate>
@@ -184,18 +221,47 @@
                     IsSelected="{Binding IsTabAppSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <Grid>
                         <control:ExtendedTreeView
-                            x:Name="TreeViewApp" MouseRightButtonDown="TreeViewApp_MouseRightButtonDown"
+                            x:Name="TreeViewApp"
                             Grid.ColumnSpan="2"
                             FontSize="12"
                             ItemsSource="{Binding ApplicationItems, Mode=TwoWay}"
+                            MouseRightButtonDown="TreeViewApp_MouseRightButtonDown"
                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                             SelectedItem_="{Binding SelectedAppItem, Mode=TwoWay}">
                             <TreeView.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Command="{Binding OpenLcAssemblyApp}" Header="Open Location Assembly" />
-                                    <MenuItem Command="{Binding ExecuteAddinCommand}" Header="Run" />
-                                    <MenuItem Command="{Binding LoadCommand}" Header="Load" />
-                                    <MenuItem Command="{Binding RemoveCommand}" Header="Remove" />
+                                    <MenuItem Command="{Binding OpenLcAssemblyApp}" Header="O(_O)pen Location Assembly">
+                                        <MenuItem.Icon>
+                                            <TextBlock
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="16"
+                                                Text="&#xE838;" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Command="{Binding ExecuteAddinCommand}" Header="R(_R)un">
+                                        <MenuItem.Icon>
+                                            <TextBlock
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="16"
+                                                Text="&#xF5B0;" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Command="{Binding LoadCommand}" Header="L(_L)oad">
+                                        <MenuItem.Icon>
+                                            <TextBlock
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="16"
+                                                Text="&#xE896;" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Command="{Binding RemoveCommand}" Header="Rem(_m)ove">
+                                        <MenuItem.Icon>
+                                            <TextBlock
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="16"
+                                                Text="&#xE107;" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
                             </TreeView.ContextMenu>
                             <TreeView.ItemTemplate>
@@ -257,8 +323,22 @@
                             VerticalScrollBarVisibility="Auto">
                             <DataGrid.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Command="{Binding OpenLocalAddinCommand}" Header="Open Location Addin" />
-                                    <MenuItem Command="{Binding EditAddinCommand}" Header="Edit Addin" />
+                                    <MenuItem Command="{Binding OpenLocalAddinCommand}" Header="O(_O)pen Location Addin">
+                                        <MenuItem.Icon>
+                                            <TextBlock
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="16"
+                                                Text="&#xE838;" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Command="{Binding EditAddinCommand}" Header="E(_E)dit Addin">
+                                        <MenuItem.Icon>
+                                            <TextBlock
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="16"
+                                                Text="&#xE104;" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
                             </DataGrid.ContextMenu>
                             <DataGrid.Resources>

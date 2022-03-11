@@ -10,8 +10,9 @@ using RevitAddinManager.Model;
 using RevitAddinManager.ViewModel;
 
 //Done 1、搜索高亮
-//TODO 2、右键切换选择项
-//TODO 3、图标以及快捷键
+//Done 2、右键切换当前选择项SelectedItem
+//Done 3、图标以及快捷键
+//TODO 4、TreeView 鼠标掠过效果
 
 namespace RevitAddinManager.View;
 
