@@ -15,6 +15,7 @@
     d:DataContext="{d:DesignInstance viewModel:AddInManagerViewModel}"
     FocusManager.FocusedElement="{x:Reference tbxSearch}"
     Icon="../Resources/dev.ico"
+    ShowInTaskbar="False"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
@@ -23,6 +24,20 @@
                 <!--<ResourceDictionary Source="/PresentationFramework.Luna;component/themes/Luna.NormalColor.xaml" />-->
                 <ResourceDictionary Source="/PresentationFramework.Royale;V3.0.0.0;31bf3856ad364e35;component\themes\royale.normalcolor.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <!--  默认高亮Style  -->
+            <Style x:Key="defaultHighlightingTextBlock" TargetType="{x:Type control:HighlightingTextBlock}">
+                <Setter Property="HighlightBackground" Value="Yellow" />
+                <Setter Property="HighlightForeground" Value="Black" />
+                <Setter Property="HighlightFontWeight" Value="Bold" />
+                <Setter Property="HighlightStringComparison" Value="InvariantCultureIgnoreCase" />
+                <Setter Property="HighlightTextDecorations" Value="Underline" />
+            </Style>
+            <Style x:Key="SearchTextBlockStyle" TargetType="control:HighlightingTextBlock">
+                <Setter Property="Text" Value="{Binding AddinModel.Name}" />
+                <Setter Property="HighlightText" Value="{Binding ElementName=tbxSearch, Path=Text}" />
+                <Setter Property="HighlightBackground" Value="#FEFCC8" />
+                <Setter Property="HighlightForeground" Value="Black" />
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Window.InputBindings>
@@ -30,7 +45,7 @@
         <KeyBinding Command="{Binding ReloadCommand}" Gesture="F5" />
         <KeyBinding Command="{Binding HelpCommand}" Gesture="F1" />
     </Window.InputBindings>
-    <Grid>
+    <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition />
@@ -46,7 +61,7 @@
                 x:Name="tbxSearch"
                 Grid.Row="0"
                 Margin="5,0,5,0"
-                VerticalAlignment="Center"
+                VerticalAlignment="Center" TextChanged="tbxSearch_TextChanged"
                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.Resources>
                     <VisualBrush
@@ -114,9 +129,29 @@
                                         Focusable="False"
                                         IsChecked="{Binding IsChecked}" />
                                     <ContentPresenter Margin="2,0" Content="{Binding Name, Mode=OneTime}" />
+                                    <!--<control:HighlightingTextBlock
+                                        HighlightText="{Binding ElementName=tbxSearch, Path=Text}"
+                                        Style="{StaticResource defaultHighlightingTextBlock}"
+                                        Text="{Binding Path=Name}"
+                                        TextWrapping="Wrap" />-->
                                 </StackPanel>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
+                        <!--<control:ExtendedTreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type viewModel:AddinModel}" ItemsSource="{Binding Children, Mode=OneTime}">
+                                <StackPanel Orientation="Horizontal">
+                        -->
+                        <!--<Rectangle Width="16" Height="16" Margin="3,0" Fill="{StaticResource SolutionIconBrush}" />-->
+                        <!--
+                                    <CheckBox
+                                        VerticalAlignment="Center"
+                                        Focusable="False"
+                                        IsChecked="{Binding IsChecked}" />
+                                    <control:HighlightingTextBlock Style="{StaticResource SearchTextBlockStyle}" />
+                                    <TextBlock Text="{Binding Name}" />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </control:ExtendedTreeView.Resources>-->
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="IsExpanded" Value="True" />
