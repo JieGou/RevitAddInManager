@@ -11,7 +11,7 @@ using RevitAddinManager.ViewModel;
 
 //Done 1、搜索高亮
 //Done 2、右键切换当前选择项SelectedItem
-//Done 3、图标以及快捷键
+//Done 3、右键菜单图标以及快捷键
 //TODO 4、TreeView 鼠标掠过效果
 
 namespace RevitAddinManager.View;
@@ -186,7 +186,7 @@ public partial class FrmAddInManager : Window
     /// <param name="e"></param>
     private void TreeViewApp_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
-        var currentSelectedItem = SelectItemByRightClickOfMvvm(TreeViewCommand);
+        var currentSelectedItem = SelectItemByRightClickOfMvvm(TreeViewApp);
         if (currentSelectedItem != null && currentSelectedItem.DataContext is AddinModel treeNode)
         {
             viewModel.SelectedAppItem = treeNode;
