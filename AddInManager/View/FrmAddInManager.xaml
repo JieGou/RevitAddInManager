@@ -107,7 +107,7 @@
                     Header="Load Command"
                     IsSelected="{Binding IsTabCmdSelected}">
                     <control:ExtendedTreeView
-                        x:Name="TreeViewCommand"
+                        x:Name="TreeViewCommand" MouseRightButtonDown="TreeViewCommand_MouseRightButtonDown"
                         FontSize="12"
                         ItemsSource="{Binding CommandItems, Mode=TwoWay}"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -184,7 +184,7 @@
                     IsSelected="{Binding IsTabAppSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <Grid>
                         <control:ExtendedTreeView
-                            x:Name="TreeViewApp"
+                            x:Name="TreeViewApp" MouseRightButtonDown="TreeViewApp_MouseRightButtonDown"
                             Grid.ColumnSpan="2"
                             FontSize="12"
                             ItemsSource="{Binding ApplicationItems, Mode=TwoWay}"
