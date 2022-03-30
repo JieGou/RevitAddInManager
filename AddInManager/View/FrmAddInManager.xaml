@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="clr-namespace:RevitAddinManager.Model"
+    xmlns:searchTextBox="clr-namespace:SearchTextBox;assembly=SearchTextBox"
     xmlns:viewModel="clr-namespace:RevitAddinManager.ViewModel"
     Title="Revit Add In Manager"
     Width="400"
@@ -38,6 +39,13 @@
                 <Setter Property="HighlightBackground" Value="#FEFCC8" />
                 <Setter Property="HighlightForeground" Value="Black" />
             </Style>
+            <!--  提示的数据样板  -->
+            <DataTemplate x:Key="PromptTemplate">
+                <TextBlock
+                    FontStyle="Italic"
+                    Foreground="Gray"
+                    Text="搜索..." />
+            </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
     <Window.InputBindings>
@@ -57,36 +65,13 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
-            <TextBox
+            <searchTextBox:SearchTextBox
                 x:Name="tbxSearch"
                 Grid.Row="0"
                 Margin="5,0,5,0"
                 VerticalAlignment="Center"
-                Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                TextChanged="tbxSearch_TextChanged">
-                <TextBox.Resources>
-                    <VisualBrush
-                        x:Key="tbxText"
-                        AlignmentX="Left"
-                        Stretch="None"
-                        TileMode="None">
-                        <VisualBrush.Visual>
-                            <TextBlock Foreground="DimGray" Text="Search..." />
-                        </VisualBrush.Visual>
-                    </VisualBrush>
-                </TextBox.Resources>
-                <TextBox.Style>
-                    <Style TargetType="TextBox">
-                        <Setter Property="BorderBrush" Value="AliceBlue" />
-                        <Setter Property="Background" Value="Transparent" />
-                        <Style.Triggers>
-                            <Trigger Property="Text" Value="">
-                                <Setter Property="Background" Value="{StaticResource tbxText}" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBox.Style>
-            </TextBox>
+                PromptTemplate="{StaticResource PromptTemplate}"
+                Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button
                 Grid.Column="1"
                 Margin="0,0,1,0"
@@ -165,30 +150,15 @@
                                         VerticalAlignment="Center"
                                         Focusable="False"
                                         IsChecked="{Binding IsChecked}" />
-                                    <ContentPresenter Margin="2,0" Content="{Binding Name, Mode=OneTime}" />
-                                    <!--<control:HighlightingTextBlock
+                                    <!--<ContentPresenter Margin="2,0" Content="{Binding Name, Mode=OneTime}" />-->
+                                    <control:HighlightingTextBlock
                                         HighlightText="{Binding ElementName=tbxSearch, Path=Text}"
                                         Style="{StaticResource defaultHighlightingTextBlock}"
                                         Text="{Binding Path=Name}"
-                                        TextWrapping="Wrap" />-->
+                                        TextWrapping="Wrap" />
                                 </StackPanel>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
-                        <!--<control:ExtendedTreeView.Resources>
-                            <HierarchicalDataTemplate DataType="{x:Type viewModel:AddinModel}" ItemsSource="{Binding Children, Mode=OneTime}">
-                                <StackPanel Orientation="Horizontal">
-                        -->
-                        <!--<Rectangle Width="16" Height="16" Margin="3,0" Fill="{StaticResource SolutionIconBrush}" />-->
-                        <!--
-                                    <CheckBox
-                                        VerticalAlignment="Center"
-                                        Focusable="False"
-                                        IsChecked="{Binding IsChecked}" />
-                                    <control:HighlightingTextBlock Style="{StaticResource SearchTextBlockStyle}" />
-                                    <TextBlock Text="{Binding Name}" />
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
-                        </control:ExtendedTreeView.Resources>-->
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="IsExpanded" Value="True" />
