@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <UseWPF>true</UseWPF>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <PlatformTarget>x64</PlatformTarget>
     <ImplicitUsings>true</ImplicitUsings>
     <UseWindowsForms>false</UseWindowsForms>
     <TargetFramework>net48</TargetFramework>
-    <Configurations>Debug R22</Configurations>
-    <Configurations>$(Configurations);Release R14;Release R15;Release R16;Release R17;Release R18;Release R19;Release R20;Release R21;Release R22;Release R23</Configurations>
+    <Configurations>Debug R22;Debug R23;Debug R24</Configurations>
+    <Configurations>$(Configurations);Release R18;Release R19;Release R20;Release R21;Release R22;Release R23;Release R24</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration.Contains('Debug'))">
     <DebugSymbols>true</DebugSymbols>
@@ -18,22 +18,6 @@
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration.Contains('R14'))">
-    <RevitVersion>2014</RevitVersion>
-    <DefineConstants>$(DefineConstants);R14</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration.Contains('R15'))">
-    <RevitVersion>2015</RevitVersion>
-    <DefineConstants>$(DefineConstants);R15</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration.Contains('R16'))">
-    <RevitVersion>2016</RevitVersion>
-    <DefineConstants>$(DefineConstants);R16</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration.Contains('R17'))">
-    <RevitVersion>2017</RevitVersion>
-    <DefineConstants>$(DefineConstants);R17</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration.Contains('R18'))">
     <RevitVersion>2018</RevitVersion>
@@ -59,6 +43,10 @@
     <RevitVersion>2023</RevitVersion>
     <DefineConstants>$(DefineConstants);R23</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.Contains('R24'))">
+    <RevitVersion>2024</RevitVersion>
+    <DefineConstants>$(DefineConstants);R24</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup>
     <Version>$(RevitVersion)</Version>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -73,10 +61,15 @@
     <None Remove="Resources\folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Chuongmep.RevitAPI" Version="1.0.1">
-        <ExcludeAssets>runtime</ExcludeAssets>
+    <PackageReference Include="Chuongmep.Revit.Api.RevitAPI" Version="$(RevitVersion).*">
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
-    <!--<PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion).*" />-->
+    <PackageReference Include="Chuongmep.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Chuongmep.Revit.Api.AdWindows" Version="$(RevitVersion).*">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="SearchTextBox">
@@ -91,10 +84,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Settings.Designer.cs">
+    <Compile Update="Properties\App.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
+      <DependentUpon>App.settings</DependentUpon>
     </Compile>
     <Compile Update="Resource.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -111,9 +104,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Properties\Settings.settings">
+    <None Update="Properties\App.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <LastGenOutput>App.Designer.cs</LastGenOutput>
     </None>
     <None Update="View\AssemblyLoader.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -125,11 +118,20 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationFramework.Aero2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RevitElementBipChecker\RevitElementBipChecker.csproj" />
+  </ItemGroup>
   
   <Target Name="CopyFiles" AfterTargets="CoreBuild">
     <ItemGroup>
       <RootItem Include="$(ProjectDir)*.addin" />
-      <AddinItem Include="$(TargetDir)$(AssemblyName).*" />
+      <AddinItem Include="$(TargetDir)*.dll" />
+      <AddinItem Include="$(TargetDir)*.pdb" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -143,7 +145,7 @@
     <ItemGroup>
       <AddinFiles Include="$(RootDir)**\*.*" />
     </ItemGroup>
-
+    <Message Text="Copy files to Addin folder" Importance="high" />
     <Copy SourceFiles="@(AddinFiles)" DestinationFolder="$(AppData)\Autodesk\Revit\Addins\$(RevitVersion)\%(RecursiveDir)" Condition="$(Configuration.Contains('Debug'))" />
   </Target>
 

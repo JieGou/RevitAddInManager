@@ -1,4 +1,5 @@
-﻿using Autodesk.Revit.Attributes;
+﻿using System.Diagnostics;
+using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using RevitAddinManager.Model;
@@ -10,11 +11,17 @@ public class AddInManagerManual : IExternalCommand
 {
     public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
     {
+        Debug.Listeners.Clear();
+        Trace.Listeners.Clear();
+        CodeListener codeListener = new CodeListener();
+        Debug.Listeners.Add(codeListener);
         StaticUtil.RegenOption = RegenerationOption.Manual;
         StaticUtil.TransactMode = TransactionMode.Manual;
-        return AddinManagerBase.Instance.ExecuteCommand(commandData, ref message, elements, false);
+        Result result = AddinManagerBase.Instance.ExecuteCommand(commandData, ref message, elements, false);
+        return result;
     }
 }
+
 [Transaction(TransactionMode.Manual)]
 public class AddInManagerFaceless : IExternalCommand
 {
@@ -23,6 +30,7 @@ public class AddInManagerFaceless : IExternalCommand
         return AddinManagerBase.Instance.ExecuteCommand(commandData, ref message, elements, true);
     }
 }
+
 [Transaction(TransactionMode.Manual)]
 public class AddInManagerReadOnly : IExternalCommand
 {
@@ -31,5 +39,17 @@ public class AddInManagerReadOnly : IExternalCommand
         StaticUtil.RegenOption = RegenerationOption.Manual;
         StaticUtil.TransactMode = TransactionMode.ReadOnly;
         return AddinManagerBase.Instance.ExecuteCommand(commandData, ref message, elements, false);
+    }
+}
+
+public class AddinManagerCommandAvail : IExternalCommandAvailability
+{
+    public AddinManagerCommandAvail()
+    {
+    }
+
+    public bool IsCommandAvailable(UIApplication uiApp, CategorySet selectedCategories)
+    {
+        return true;
     }
 }

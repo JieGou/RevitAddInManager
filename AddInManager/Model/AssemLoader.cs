@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
+﻿using RevitAddinManager.View;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows;
-using RevitAddinManager.View;
 
 namespace RevitAddinManager.Model;
 
@@ -21,7 +21,6 @@ public class AssemLoader
         set => tempFolder = value;
     }
 
-
     public AssemLoader()
     {
         tempFolder = string.Empty;
@@ -29,10 +28,10 @@ public class AssemLoader
         copiedFiles = new Dictionary<string, DateTime>();
     }
 
-
     public void CopyGeneratedFilesBack()
     {
         var files = Directory.GetFiles(tempFolder, "*.*", SearchOption.AllDirectories);
+        if(!files.Any()) return;
         foreach (var text in files)
         {
             if (copiedFiles.ContainsKey(text))
@@ -67,7 +66,7 @@ public class AssemLoader
 
     public Assembly LoadAddinsToTempFolder(string originalFilePath, bool parsingOnly)
     {
-        if (string.IsNullOrEmpty(originalFilePath) || originalFilePath.StartsWith("\\") || !File.Exists(originalFilePath))
+        if (string.IsNullOrEmpty(originalFilePath)|| !File.Exists(originalFilePath))
         {
             return null;
         }
@@ -92,10 +91,9 @@ public class AssemLoader
         return assembly;
     }
 
-
     private Assembly CopyAndLoadAddin(string srcFilePath, bool onlyCopyRelated)
     {
-        var text = string.Empty;
+        var filePath = string.Empty;
         if (!FileUtils.FileExistsInFolder(srcFilePath, tempFolder))
         {
             var directoryName = Path.GetDirectoryName(srcFilePath);
@@ -104,8 +102,8 @@ public class AssemLoader
                 refedFolders.Add(directoryName);
             }
             var list = new List<FileInfo>();
-            text = FileUtils.CopyFileToFolder(srcFilePath, tempFolder, onlyCopyRelated, list);
-            if (string.IsNullOrEmpty(text))
+            filePath = FileUtils.CopyFileToFolder(srcFilePath, tempFolder, onlyCopyRelated, list);
+            if (string.IsNullOrEmpty(filePath))
             {
                 return null;
             }
@@ -114,7 +112,7 @@ public class AssemLoader
                 copiedFiles.Add(fileInfo.FullName, fileInfo.LastWriteTime);
             }
         }
-        return LoadAddin(text);
+        return LoadAddin(filePath);
     }
 
     private Assembly LoadAddin(string filePath)
@@ -133,42 +131,49 @@ public class AssemLoader
         return result;
     }
 
-
     private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
     {
         Assembly result;
         new AssemblyName(args.Name);
-        var text = SearchAssemblyFileInTempFolder(args.Name);
-        if (File.Exists(text))
+        var filePath = SearchAssemblyFileInTempFolder(args.Name);
+        if (File.Exists(filePath))
         {
-            result = LoadAddin(text);
+            result = LoadAddin(filePath);
         }
         else
         {
-            text = SearchAssemblyFileInOriginalFolders(args.Name);
-            if (string.IsNullOrEmpty(text))
+            filePath = SearchAssemblyFileInOriginalFolders(args.Name);
+            if (string.IsNullOrEmpty(filePath))
             {
                 var array = args.Name.Split(new char[]
                 {
                     ','
                 });
-                var text2 = array[0];
+                var ass = array[0];
                 if (array.Length > 1)
                 {
                     var text3 = array[2];
-                    if (text2.EndsWith(".resources", StringComparison.CurrentCultureIgnoreCase) && !text3.EndsWith("neutral", StringComparison.CurrentCultureIgnoreCase))
+                    if (ass.EndsWith(".resources", StringComparison.CurrentCultureIgnoreCase) && !text3.EndsWith("neutral", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        text2 = text2.Substring(0, text2.Length - ".resources".Length);
+                        ass = ass.Substring(0, ass.Length - ".resources".Length);
                     }
-                    text = SearchAssemblyFileInTempFolder(text2);
-                    if (File.Exists(text))
+                    // Skip searching for the assembly if assembly with specified name is already loaded
+                    foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
                     {
-                        return LoadAddin(text);
+                        if (String.Compare(assembly.GetName().Name, ass, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return null;
+                        }
                     }
-                    text = SearchAssemblyFileInOriginalFolders(text2);
+                    filePath = SearchAssemblyFileInTempFolder(ass);
+                    if (File.Exists(filePath))
+                    {
+                        return LoadAddin(filePath);
+                    }
+                    filePath = SearchAssemblyFileInOriginalFolders(ass);
                 }
             }
-            if (string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(filePath))
             {
                 var loader = new AssemblyLoader(args.Name);
                 loader.WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -176,9 +181,9 @@ public class AssemLoader
                 {
                     return null;
                 }
-                text = loader.resultPath;
+                filePath = loader.resultPath;
             }
-            result = CopyAndLoadAddin(text, true);
+            result = CopyAndLoadAddin(filePath, true);
         }
 
         return result;
@@ -188,17 +193,19 @@ public class AssemLoader
     {
         try
         {
-               
-            var array = new string[] {".dll", ".exe"};
-            var text = string.Empty;
-            var str = assemName.Substring(0, assemName.IndexOf(','));
+            var array = new string[] { ".dll", ".exe" };
+            var filePath = string.Empty;
+            if(string.IsNullOrEmpty(assemName)) return String.Empty;
+            // Avoid ArgumentOutOfRangeException from .Substring() by checking length parameter
+            var strLength = assemName.IndexOf(',');
+            var str = strLength == -1 ? assemName : assemName.Substring(0, strLength);
             foreach (var str2 in array)
             {
-                text = tempFolder + "\\" + str + str2;
+                filePath = tempFolder + "\\" + str + str2;
 
-                if (File.Exists(text))
+                if (File.Exists(filePath))
                 {
-                    return text;
+                    return filePath;
                 }
             }
         }
@@ -209,32 +216,33 @@ public class AssemLoader
         return string.Empty;
     }
 
-
     private string SearchAssemblyFileInOriginalFolders(string assemName)
     {
-        var array = new string[]
+        var extensions = new string[]
         {
             ".dll",
             ".exe"
         };
-        string text;
-        var text2 = assemName.Substring(0, assemName.IndexOf(','));
-        foreach (var str in array)
+        string filePath;
+        // Avoid ArgumentOutOfRangeException from .Substring() by checking length parameter
+        var assLength = assemName.IndexOf(',');
+        var ass = assLength == -1 ? assemName : assemName.Substring(0, assLength);
+        foreach (var str in extensions)
         {
-            text = dotnetDir + "\\" + text2 + str;
-            if (File.Exists(text))
+            filePath = dotnetDir + "\\" + ass + str;
+            if (File.Exists(filePath))
             {
-                return text;
+                return filePath;
             }
         }
-        foreach (var str2 in array)
+        foreach (var ex in extensions)
         {
-            foreach (var str3 in refedFolders)
+            foreach (var folder in refedFolders)
             {
-                text = str3 + "\\" + text2 + str2;
-                if (File.Exists(text))
+                filePath = folder + "\\" + ass + ex;
+                if (File.Exists(filePath))
                 {
-                    return text;
+                    return filePath;
                 }
             }
         }
@@ -244,11 +252,11 @@ public class AssemLoader
             var path = directoryInfo.Parent?.FullName + "\\Regression\\_RegressionTools\\";
             if (Directory.Exists(path))
             {
-                foreach (var text3 in Directory.GetFiles(path, "*.*", SearchOption.AllDirectories))
+                foreach (var fileName in Directory.GetFiles(path, "*.*", SearchOption.AllDirectories))
                 {
-                    if (Path.GetFileNameWithoutExtension(text3).Equals(text2, StringComparison.OrdinalIgnoreCase))
+                    if (Path.GetFileNameWithoutExtension(fileName).Equals(ass, StringComparison.OrdinalIgnoreCase))
                     {
-                        return text3;
+                        return fileName;
                     }
                 }
             }
@@ -281,7 +289,7 @@ public class AssemLoader
         {
             foreach (var assembly2 in AppDomain.CurrentDomain.GetAssemblies())
             {
-                if (String.Compare(assembly2.GetName().Name,AssRevitName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (String.Compare(assembly2.GetName().Name, AssRevitName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     revitApiAssemblyFullName = assembly2.GetName().Name;
                     break;

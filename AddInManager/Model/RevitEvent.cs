@@ -1,17 +1,17 @@
-﻿using System.Windows;
-using Autodesk.Revit.DB;
+﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using System.Windows;
 
 namespace RevitAddinManager.Model
 {
     public class RevitEvent : IExternalEventHandler
     {
         private Action DoAction;
-        private Document Doc;
         private readonly ExternalEvent ExEvent;
         private bool SkipFailures;
         private string TransactionName;
         private bool WithTransaction;
+
         public RevitEvent()
         {
             ExEvent = ExternalEvent.Create(this);
@@ -25,28 +25,28 @@ namespace RevitAddinManager.Model
         /// <param name="doc">document</param>
         /// <param name="transactionName">transaction name</param>
         /// <param name="withTrans">is transaction</param>
-        public void Run(Action doAction, bool skipFailures, Document doc = null, string transactionName = null, bool withTrans = true)
+        public void Run(Action doAction, bool skipFailures, string transactionName = null, bool withTrans = true)
         {
             this.DoAction = doAction;
             this.SkipFailures = skipFailures;
-            this.Doc = doc;
             WithTransaction = withTrans;
             ExEvent.Raise();
             this.TransactionName = transactionName;
         }
+
         public void Execute(UIApplication app)
         {
             try
             {
                 if (DoAction != null)
                 {
-                    if (Doc == null) Doc = app.ActiveUIDocument.Document;
+                   
                     if (SkipFailures)
                         app.Application.FailuresProcessing += Application_FailuresProcessing;
 
                     if (WithTransaction)
                     {
-                        using (Transaction t = new Transaction(Doc, TransactionName ?? "RevitEvent"))
+                        using (Transaction t = new Transaction(app.ActiveUIDocument.Document, TransactionName ?? "RevitEvent"))
                         {
                             t.Start();
                             DoAction();

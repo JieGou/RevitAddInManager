@@ -1,4 +1,66 @@
 # Changelog
+- 2023-06-02 **1.4.7**
+  - Add more column parameter unit bip checker.
+- 2023-06-02 **1.4.6**
+  - Supported Button Quick Bip Checker - [RevitElementBipChecker](https://github.com/chuongmep/RevitElementBipChecker)
+- 2023-04-20 **1.4.5**
+  - Support open add-in manager from modify tab in Revit
+- 2023-03-12 **1.4.4**
+  - Fix load assembly with specified name is already loaded [#45](https://github.com/chuongmep/RevitAddInManager/pull/45)
+- 2023-02-14 **1.4.3**
+  - Fix Window Stuck Off Screen [#43](https://github.com/chuongmep/RevitAddInManager/issues/43)
+- 2022-12-23 **1.4.2**
+  - Keep save window position when close and open again (useful for multi monitor).
+- 2022-12-18 **1.4.1**
+	- Fix problem relative path \\\\mac... in MACOS [#40](https://github.com/chuongmep/RevitAddInManager/issues/40)
+- 2022-11-26 **1.4.0**
+  - Support Revit 2024 Preview Release
+- 2022-11-8 **1.3.9**
+  - Fix problem with some user install msi with PC company have policy [#41](https://github.com/chuongmep/RevitAddInManager/issues/41).
+- 2022-10-16 **1.3.8**
+  - Support save keep last window size change. 
+- 2022-09-11 **1.3.7**
+  - Show detail version installed in title 
+  - Improve drag window only in DataGrid tab Command and tab App
+- 2022-08-29 **1.3.6**
+  - Fix problem` Trace/Debug not show result when one Add-in Manager in first time [#34](https://github.com/chuongmep/RevitAddInManager/issues/34)
+- 2022-06-30 **1.3.5**`
+  - Allow Use Add-in Manager without loading a model [#28](https://github.com/chuongmep/RevitAddInManager/issues/28) 
+- 2022-06-23 **1.3.4**
+  - Fix DockPanel startup with some version lower 2019 [#27](https://github.com/chuongmep/RevitAddInManager/issues/27)
+  - Revert use search by index of.
+- 2022-06-15 **1.3.3**
+  - Fix issue color with dark theme [#26](https://github.com/chuongmep/RevitAddInManager/issues/26)
+- 2022-06-11 **1.3.2**
+  - Allow drag window use mouse every where position
+- 2022-06-10 **1.3.1**
+  - Improve search bar Style
+  - Improve TreeViewItem show tree same window form
+  - Improve speed up search item by Knuth-Morris-Pratt (KMP) Algorithm.
+- 2022-06-10 **1.3.0**
+  - Add Mutiple Theme Support : Default, Dark, Light.
+  - Use <kbd>Alt +T</kbd> to change theme.
+  - Fix some small bug.
+  - Improve search bar margin.
+- 2022-06-02 **1.2.9**
+  - Support event ArrowKeyDown and ArrowKeyUp to move between items search and TreeView [#25](https://github.com/chuongmep/RevitAddInManager/pull/25)
+  - Support press key Esc from keyboard to close Form.
+- 2022-05-15 **1.2.8**
+  - Support copy Content Debug/Trace Output Right click or Crt + C
+- 2022-05-11 **1.2.7**
+  - Fix small bug use trace/debug same time in logcontrol [#24](https://github.com/chuongmep/RevitAddInManager/issues/24)
+- 2022-05-10 **1.2.6**
+  - Add tab support show result trace/debug
+  - Add DockPanel Support Show/Hide Debug/Trace result.
+  - Support use Trace.Write() output in RevitAddinManager and DockPanel **Debug/Trace Output** 
+  - Support use Trace.WriteLine() output in RevitAddinManager and DockPanel **Debug/Trace Output**
+  - Support use Debug.WriteLine() output in RevitAddinManager and DockPanel **Debug/Trace Output**
+  - Support use Debug.WriteLine() output in RevitAddinManager and DockPanel **Debug/Trace Output**
+  - Support show difference color type : Add,Modify,Warning,Error,Delete.
+- 2022-05-07 **1.2.5**
+  - Support show detail assembly referenced to load manually.
+- 2022-04-21 **1.2.4**
+  - Support `Crt + Mouse Wheel` to zoomIn ZoomOut command
 - 2022-03-07 **1.2.3**
   - Fix problem when user double click mutiple to open AddinManager.
 - 2022-03-05 **1.2.2**
