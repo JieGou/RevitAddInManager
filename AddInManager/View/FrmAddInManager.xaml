@@ -20,9 +20,9 @@
     Closed="OnCloseApp"
     FocusManager.FocusedElement="{Binding ElementName=tbxSearch}"
     Icon="../Resources/dev.ico"
-    ShowInTaskbar="False"
     Left="{model:SettingBinding AppLeft}"
     PreviewKeyDown="CloseFormEvent"
+    ShowInTaskbar="False"
     SizeChanged="FrmSizeChanged"
     Top="{model:SettingBinding AppTop}"
     mc:Ignorable="d">
@@ -63,8 +63,7 @@
         <KeyBinding Command="{Binding HelpCommand}" Gesture="F1" />
         <KeyBinding Command="{Binding ChangeThemCommand}" Gesture="Alt+T" />
     </Window.InputBindings>
-    <Grid Margin="5">
-    <Grid Background="{DynamicResource WindowBackground}">
+    <Grid Margin="5" Background="{DynamicResource WindowBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition />
@@ -83,9 +82,8 @@
                 Height="25"
                 Margin="1,0,5,0"
                 VerticalAlignment="Center"
-                PromptTemplate="{StaticResource PromptTemplate}"
-                Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 PreviewKeyDown="HandleTextboxKeyPress"
+                PromptTemplate="{StaticResource PromptTemplate}"
                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.Resources>
                     <VisualBrush
@@ -121,7 +119,7 @@
                         </Style.Triggers>
                     </Style>
                 </TextBox.Style>
-            </TextBox>
+            </searchTextBox:SearchTextBox>
             <Button
                 Grid.Column="1"
                 Margin="1,1,2,1"
@@ -177,6 +175,7 @@
                                             Text="&#xE838;" />
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem Command="{Binding OpenRefsAssemblyCommand}" Header="Assembly Info..." />
                                 <MenuItem Command="{Binding ExecuteAddinCommand}" Header="R(_R)un">
                                     <MenuItem.Icon>
                                         <TextBlock
@@ -193,12 +192,6 @@
                                             Text="&#xE777;" />
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Command="{Binding LoadCommand}" Header="Load" />
-                                <MenuItem Command="{Binding RemoveCommand}" Header="Remove" />
-                                <MenuItem Command="{Binding OpenLcAssemblyCommand}" Header="Open Location Assembly" />
-                                <MenuItem Command="{Binding OpenRefsAssemblyCommand}" Header="Assembly Info..." />
-                                <MenuItem Command="{Binding ExecuteAddinCommand}" Header="Run" />
-                                <MenuItem Command="{Binding ReloadCommand}" Header="Reload" />
                             </ContextMenu>
                         </TreeView.ContextMenu>
                         <TreeView.ItemTemplate>

@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Text.RegularExpressions;
-using RevitAddinManager.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -8,7 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using RevitAddinManager.Model;
-using System.Windows.Threading;
+using RevitAddinManager.ViewModel;
 
 //Done 1、搜索高亮
 //Done 2、右键切换当前选择项SelectedItem
@@ -109,6 +108,7 @@ public partial class FrmAddInManager : Window
             }
         }
         return null;
+    }
     private void TreeViewCommand_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
     {
         if (Keyboard.Modifiers != ModifierKeys.Control)
