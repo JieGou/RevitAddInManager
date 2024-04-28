@@ -2,14 +2,41 @@
 
 namespace RevitAddinManager.ViewModel;
 
+/// <summary>
+/// Addins命令类
+/// </summary>
 public class AddinsCommand : Addins
 {
+    /// <summary>
+    /// 外部命令
+    /// </summary>
     private static string ExternalName = "ExternalCommands";
+
+    /// <summary>
+    /// 外部命令名称
+    /// </summary>
     private static string ExternalCName = "ECName";
+
+    /// <summary>
+    /// 外部命令数量
+    /// </summary>
     private static string ExternalCount = "ECCount";
+
+    /// <summary>
+    /// 外部命令对应的类名称
+    /// </summary>
     private static string ExternalClassName = "ECClassName";
+
+    /// <summary>
+    /// 外部命令对应的程序集名称
+    /// </summary>
     private static string ExternalAssembly = "ECAssembly";
+
+    /// <summary>
+    /// 外部命令的帮助描述信息
+    /// </summary>
     private static string ExternalDescription = "ECDescription";
+
     public void ReadItems(IniFile file)
     {
         var num = file.ReadInt(ExternalName, ExternalCount);
@@ -21,7 +48,7 @@ public class AddinsCommand : Addins
         SortAddin();
     }
 
-    private bool ReadExternalCommand(IniFile file, int nodeNumber)
+    void ReadExternalCommand(IniFile file, int nodeNumber)
     {
         var name = file.ReadString(ExternalName, ExternalCName + nodeNumber);
         var text = file.ReadString(ExternalName, ExternalAssembly + nodeNumber);
@@ -29,7 +56,7 @@ public class AddinsCommand : Addins
         var description = file.ReadString(ExternalName, ExternalDescription + nodeNumber);
         if (string.IsNullOrEmpty(text2) || string.IsNullOrEmpty(text))
         {
-            return false;
+            return;
         }
         AddItem(new AddinItem(AddinType.Command)
         {
@@ -38,9 +65,12 @@ public class AddinsCommand : Addins
             FullClassName = text2,
             Description = description
         });
-        return true;
     }
 
+    /// <summary>
+    /// 保存命令到ini文件
+    /// </summary>
+    /// <param name="file"></param>
     public void Save(IniFile file)
     {
         file.WriteSection(ExternalName);

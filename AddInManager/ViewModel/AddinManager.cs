@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
+﻿using RevitAddinManager.Model;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using RevitAddinManager.Model;
 
 namespace RevitAddinManager.ViewModel;
 
@@ -12,7 +12,6 @@ public class AddinManager
     public AddinsCommand Commands => commands;
     public int CmdCount => commands.Count;
 
-
     public AddinManager()
     {
         commands = new AddinsCommand();
@@ -21,7 +20,9 @@ public class AddinManager
         ReadAddinsFromAimIni();
     }
 
-
+    /// <summary>
+    /// ini目标文件
+    /// </summary>
     private IniFile AimIniFile => aimIniFile;
 
     public IniFile RevitIniFile
@@ -37,11 +38,15 @@ public class AddinManager
         var filePath = Path.Combine(path, DefaultSetting.AimInternalName);
         aimIniFile = new IniFile(filePath);
         var currentProcess = Process.GetCurrentProcess();
-        var fileName = currentProcess.MainModule?.FileName;
-        var filePath2 = fileName?.Replace(".exe", ".ini");
-        revitIniFile = new IniFile(filePath2);
+        var revitFileName = currentProcess.MainModule?.FileName;
+        var revitIniFileName = revitFileName?.Replace(".exe", ".ini");
+        revitIniFile = new IniFile(revitIniFileName);
     }
 
+    //TODO 理解 ini文件读取到树状结构的转换过程
+    /// <summary>
+    /// 读取目标ini文件 更新addin命令以及程序
+    /// </summary>
     private void ReadAddinsFromAimIni()
     {
         commands.ReadItems(aimIniFile);
@@ -63,15 +68,15 @@ public class AddinManager
         {
             return addinType;
         }
-        List<AddinItem> list = null;
-        List<AddinItem> list2 = null;
+        List<AddinItem> commandItems = null;
+        List<AddinItem> appItems = null;
         try
         {
             assemLoader.HookAssemblyResolve();
 
             var assembly = assemLoader.LoadAddinsToTempFolder(filePath, true);
-            list = commands.LoadItems(assembly, StaticUtil.CommandFullName, filePath, AddinType.Command);
-            list2 = applications.LoadItems(assembly, StaticUtil.AppFullName, filePath, AddinType.Application);
+            commandItems = commands.LoadItems(assembly, StaticUtil.CommandFullName, filePath, AddinType.Command);
+            appItems = applications.LoadItems(assembly, StaticUtil.AppFullName, filePath, AddinType.Application);
         }
         catch (Exception e)
         {
@@ -81,15 +86,15 @@ public class AddinManager
         {
             assemLoader.UnhookAssemblyResolve();
         }
-        if (list != null && list.Count > 0)
+        if (commandItems != null && commandItems.Count > 0)
         {
-            var addin = new Addin(filePath, list);
+            var addin = new Addin(filePath, commandItems);
             commands.AddAddIn(addin);
             addinType |= AddinType.Command;
         }
-        if (list2 != null && list2.Count > 0)
+        if (appItems != null && appItems.Count > 0)
         {
-            var addin2 = new Addin(filePath, list2);
+            var addin2 = new Addin(filePath, appItems);
             applications.AddAddIn(addin2);
             addinType |= AddinType.Application;
         }
@@ -106,15 +111,17 @@ public class AddinManager
         applications.Save(revitIniFile);
     }
 
-    public void SaveAsLocal(AddInManagerViewModel vm,string filepath)
+    public void SaveAsLocal(AddInManagerViewModel vm, string filepath)
     {
         ManifestFile manifestFile = AddManifestFile(vm);
         manifestFile.SaveAs(filepath);
     }
+
     public void SaveToLocal()
     {
         SaveToLocalManifest();
     }
+
     public void SaveToLocalRevitIni()
     {
         foreach (var keyValuePair in commands.AddinDict)
@@ -137,6 +144,9 @@ public class AddinManager
         }
     }
 
+    /// <summary>
+    /// 保存命令信息到目标ini文件
+    /// </summary>
     public void SaveToAimIni()
     {
         if (!File.Exists(AimIniFile.FilePath))
@@ -166,6 +176,7 @@ public class AddinManager
         }
         return false;
     }
+
     public List<string> SaveToAllUserManifest(AddInManagerViewModel vm)
     {
         var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
@@ -217,11 +228,11 @@ public class AddinManager
                     if (children.IsChecked == true) manifestFile.Applications.Add(children.AddinItem);
                 }
             }
-
         }
 
         return manifestFile;
     }
+
     private void SaveToLocalManifest()
     {
         var dictionary = new Dictionary<string, Addin>();
@@ -293,22 +304,25 @@ public class AddinManager
 
     private string GetProperFilePath(string folder, string fileNameWithoutExt, string ext)
     {
-        string text;
+        string filePath;
         var num = -1;
         do
         {
             num++;
             var path = num <= 0 ? fileNameWithoutExt + ext : fileNameWithoutExt + num + ext;
-            text = Path.Combine(folder, path);
+            filePath = Path.Combine(folder, path);
         }
-        while (File.Exists(text));
-        return text;
+        while (File.Exists(filePath));
+        return filePath;
     }
 
     private readonly AddinsApplication applications;
 
     private readonly AddinsCommand commands;
 
+    /// <summary>
+    /// ini目标文件
+    /// </summary>
     private IniFile aimIniFile;
 
     private IniFile revitIniFile;

@@ -5,9 +5,22 @@ namespace RevitAddinManager.ViewModel;
 public class AddinsApplication : Addins
 {
     private static string ExternalName = "ExternalApplications";
+
+    /// <summary>
+    /// ExternalApplications程序集数量
+    /// </summary>
     private static string ExternalCount = "EACount";
+
+    /// <summary>
+    /// ExternalApplications程序集 插件入口类名称
+    /// </summary>
     private static string ExternalClassName = "EAClassName";
+
+    /// <summary>
+    /// ExternalApplications程序集 dll名称
+    /// </summary>
     private static string ExternalAssembly = "EAAssembly";
+
     public void ReadItems(IniFile file)
     {
         var num = file.ReadInt(ExternalName, ExternalCount);

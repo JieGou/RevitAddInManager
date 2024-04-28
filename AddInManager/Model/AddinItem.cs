@@ -1,8 +1,11 @@
-﻿using System.IO;
-using Autodesk.Revit.Attributes;
+﻿using Autodesk.Revit.Attributes;
+using System.IO;
 
 namespace RevitAddinManager.Model;
 
+/// <summary>
+/// Addin项
+/// </summary>
 public class AddinItem : IAddinNode
 {
     public AddinItem(AddinType type)
@@ -29,8 +32,8 @@ public class AddinItem : IAddinNode
         this.clientId = clientId;
         ClientIdString = clientId.ToString();
         FullClassName = fullClassName;
-        var num = fullClassName.LastIndexOf(".", StringComparison.Ordinal);
-        name = fullClassName.Substring(num + 1);
+        var dotSymbolIndex = fullClassName.LastIndexOf(".", StringComparison.Ordinal);
+        name = fullClassName.Substring(dotSymbolIndex + 1);
         Save = true;
         VisibilityMode = VisibilityMode.AlwaysVisible;
     }
@@ -49,9 +52,7 @@ public class AddinItem : IAddinNode
         manifestFile.Save();
     }
 
-
     public AddinType AddinType { get; set; }
-
 
     public string AssemblyPath
     {
@@ -63,9 +64,10 @@ public class AddinItem : IAddinNode
         }
     }
 
-
+    /// <summary>
+    /// 程序集名称
+    /// </summary>
     public string AssemblyName { get; set; }
-
 
     public Guid ClientId
     {
@@ -77,12 +79,9 @@ public class AddinItem : IAddinNode
         }
     }
 
-
     protected internal string ClientIdString { get; set; }
 
-
     public string FullClassName { get; set; }
-
 
     public string Name
     {
@@ -126,38 +125,28 @@ public class AddinItem : IAddinNode
         }
     }
 
-
     public VisibilityMode VisibilityMode { get; set; }
 
     public bool Save { get; set; }
 
-
     public bool Hidden { get; set; }
-
 
     public TransactionMode? TransactionMode { get; set; }
 
-
     public RegenerationOption? RegenerationMode { get; set; }
 
-
     public JournalingMode? JournalingMode { get; set; }
-
 
     public override string ToString()
     {
         return name;
     }
 
-
     protected string assemblyPath;
-
 
     protected Guid clientId;
 
-
     private string name;
-
 
     private string description;
 }

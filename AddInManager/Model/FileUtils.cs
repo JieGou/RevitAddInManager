@@ -1,7 +1,5 @@
 ﻿using System.IO;
 using System.Windows;
-using Autodesk.Revit.Exceptions;
-using ArgumentNullException = System.ArgumentNullException;
 
 namespace RevitAddinManager.Model;
 
@@ -38,7 +36,6 @@ public static class FileUtils
         directoryInfo3.Create();
         return directoryInfo3.FullName;
     }
-
 
     public static void SetWriteable(string fileName)
     {
@@ -114,14 +111,14 @@ public static class FileUtils
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(sourceFilePath);
             var searchPattern = fileNameWithoutExtension + ".*";
             var files = Directory.GetFiles(directoryName, searchPattern, SearchOption.TopDirectoryOnly);
-            foreach (var text in files)
+            foreach (var srcFileName in files)
             {
-                var fileName = Path.GetFileName(text);
-                var text2 = Path.Combine(destFolder, fileName);
-                var flag = CopyFile(text, text2);
+                var fileName = Path.GetFileName(srcFileName);
+                var desFileName = Path.Combine(destFolder, fileName);
+                var flag = CopyFile(srcFileName, desFileName);
                 if (flag)
                 {
-                    var item = new FileInfo(text2);
+                    var item = new FileInfo(desFileName);
                     allCopiedFiles.Add(item);
                 }
             }
@@ -136,9 +133,11 @@ public static class FileUtils
                     case MessageBoxResult.Yes:
                         CopyDirectory(directoryName, destFolder, allCopiedFiles);
                         break;
+
                     case MessageBoxResult.No:
                         CopyFileToFolder(sourceFilePath, destFolder, true, allCopiedFiles);
                         break;
+
                     default:
                         return null;
                 }
@@ -223,19 +222,18 @@ public static class FileUtils
     public static long GetFolderSize(string folderPath)
     {
         var directoryInfo = new DirectoryInfo(folderPath);
-        var num = 0L;
+        var folderSize = 0L;
         foreach (var fileSystemInfo in directoryInfo.GetFileSystemInfos())
         {
             if (fileSystemInfo is FileInfo)
             {
-                num += ((FileInfo)fileSystemInfo).Length;
+                folderSize += ((FileInfo)fileSystemInfo).Length;
             }
             else
             {
-                num += GetFolderSize(fileSystemInfo.FullName);
+                folderSize += GetFolderSize(fileSystemInfo.FullName);
             }
         }
-        return num / 1024L / 1024L;
+        return folderSize / 1024L / 1024L;
     }
-
 }
